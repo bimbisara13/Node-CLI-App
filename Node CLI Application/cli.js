@@ -30,16 +30,51 @@ if (args[0] === '--help' || args.length === 0) {
         .then(facts => {
             if (count == 1) {
                 if (facts.text == null) {
-                    console.log(`Found 0 facts for "${keyword}":`);
+                    console.log(`\nFound 0 facts for "${keyword}":`);
                 } else {
-                    console.log(`Found 1 fact containing "${keyword}":`);
+                    console.log(`\nFound 1 fact containing "${keyword}":`);
                     console.log('- ' + facts.text);
+                    const factId = facts._id;
+                    apiCall.getFactById(factId)
+                        .then(fact => {
+                            console.log('Detailed data for the selected fact:');
+                            console.log(fact);
+                        })
+                        .catch(error => console.error(error));
                 }
             } else {
-                console.log(`Found ${facts.length} facts containing "${keyword}":`);
-                facts.forEach(fact => {
-                    console.log('- ' + fact.text)
-                });
+                if (facts.length === 0) {
+                    console.log(`\nFound 0 facts for "${keyword}":`);
+                } else {
+                    console.log(`\nFound ${facts.length} facts containing "${keyword}":`);
+                    facts.forEach((fact, index) => {
+                        console.log(`${index + 1}. ${fact.text}`);
+                    });
+                    if (facts.length > 1) {
+                        const readline = require('readline').createInterface({
+                            input: process.stdin,
+                            output: process.stdout
+                        });
+                        readline.question('\nEnter fact number to view detailed info: ', index => {
+                            readline.close();
+                            const factId = facts[index - 1]._id;
+                            apiCall.getFactById(factId)
+                                .then(fact => {
+                                    console.log('\nDetailed info for the selected fact:');
+                                    console.log(fact);
+                                })
+                                .catch(error => console.error(error));
+                        });
+                    } else {
+                        const factId = facts[0]._id;
+                        apiCall.getFactById(factId)
+                            .then(fact => {
+                                console.log('\nDetailed info for the selected fact:');
+                                console.log(fact);
+                            })
+                            .catch(error => console.error(error));
+                    }
+                }
             }
         })
         .catch(error => console.error(error));
