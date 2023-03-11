@@ -1,0 +1,62 @@
+{
+	"info": {
+		"_postman_id": "c39692ae-a750-463d-a669-bea10f54d26c",
+		"name": "GET ",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23096554"
+	},
+	"item": [
+		{
+			"name": "Cat Facts",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://cat-fact.herokuapp.com/facts/random?animal_type=horse&amount=3",
+					"protocol": "https",
+					"host": [
+						"cat-fact",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"facts",
+						"random"
+					],
+					"query": [
+						{
+							"key": "animal_type",
+							"value": "horse"
+						},
+						{
+							"key": "amount",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cat Facts by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://cat-fact.herokuapp.com/facts/63fb896efcf661e5a0979404",
+					"protocol": "https",
+					"host": [
+						"cat-fact",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"facts",
+						"63fb896efcf661e5a0979404"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
