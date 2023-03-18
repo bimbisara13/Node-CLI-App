@@ -1,19 +1,18 @@
 const request = require('superagent');
+const BASE_URL = 'https://api.tvmaze.com';
 
-const BASE_URL = 'https://cat-fact.herokuapp.com';
-
-const getFacts = async (animalType, count) => {
+const getShowList = async (search) => {
     try {
-        const response = await request.get(`${BASE_URL}/facts/random`).query({ animal_type: animalType, amount: count });
+        const response = await request.get(`${BASE_URL}/search/shows`).query({ q: search });
         return response.body;
     } catch (error) {
         console.error(error);
     }
 };
 
-const getFactById = async (id) => {
+const getShowById = async (id) => {
     try {
-        const response = await request.get(`${BASE_URL}/facts/${id}`);
+        const response = await request.get(`${BASE_URL}/shows/${id}`);
         return response.body;
     } catch (error) {
         console.error(error);
@@ -21,6 +20,6 @@ const getFactById = async (id) => {
 };
 
 module.exports = {
-    getFacts,
-    getFactById,
+    getShowList,
+    getShowById,
 };

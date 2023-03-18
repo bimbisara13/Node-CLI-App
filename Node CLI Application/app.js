@@ -1,48 +1,38 @@
 const enquirer = require('enquirer');
-const apiCall = require('./api');
+const { getShowList, getShowById } = require('./api');
 
-const searchAndDisplayResults = async (keyword, animalType, count) => {
+const searchAndDisplayResults = async (keyword) => {
     try {
-        const facts = await apiCall.getFacts(animalType, count);
-        if (count == 1) {
-            if (facts.text == null) {
-                console.log(`\nFound 0 facts for "${keyword}":`);
-            } else {
-                console.log(`\nFound 1 fact containing "${keyword}":`);
-                console.log('- ' + facts.text);
-                const factId = facts._id;
-                const fact = await apiCall.getFactById(factId);
-                console.log('Detailed data for the selected fact:');
-                console.log(fact);
-            }
-        } else {
-            if (facts.length === 0) {
-                console.log(`\nFound 0 facts for "${keyword}":`);
-            } else {
-                console.log(`\nFound ${facts.length} facts containing "${keyword}":`);
-                facts.forEach((fact, index) => {
-                    console.log(`${index + 1}. ${fact.text}`);
-                });
-                if (facts.length > 1) {
-                    const prompt = new enquirer.Select({
-                        name: 'fact',
-                        message: 'Select a fact to view detailed info:',
-                        choices: facts.map(fact => fact.text)
-                    });
+        const shows = await getShowList(keyword);
 
-                    const answer = await prompt.run();
-                    const factIndex = facts.findIndex(fact => fact.text === answer);
-                    const factId = facts[factIndex]._id;
-                    const fact = await apiCall.getFactById(factId);
-                    console.log('\nDetailed info for the selected fact:');
-                    console.log(fact);
-                } else {
-                    const factId = facts[0]._id;
-                    const fact = await apiCall.getFactById(factId);
-                    console.log('\nDetailed info for the selected fact:');
-                    console.log(fact);
-                }
-            }
+        if (shows.length === 0) {
+            console.log(`\nFound 0 shows for "${keyword}".`);
+            return;
+        }
+
+        console.log(`\nFound ${shows.length} shows containing "${keyword}":`);
+        shows.forEach((show, index) => {
+            console.log(`${index + 1}. ${show.show.name}`);
+        });
+
+        if (shows.length === 1) {
+            const showId = shows[0].show.id;
+            const show = await getShowById(showId);
+            console.log('\nDetailed data for the selected show:');
+            console.log(show);
+        } else {
+            const prompt = new enquirer.Select({
+                name: 'show',
+                message: '\n\nSelect a show to view detailed info:',
+                choices: shows.map((show) => show.show.name),
+            });
+
+            const answer = await prompt.run();
+            const showIndex = shows.findIndex((show) => show.show.name === answer);
+            const showId = shows[showIndex].show.id;
+            const showDetails = await getShowById(showId);
+            console.log(`\nDetailed info for ${showDetails.name}:`);
+            console.log(showDetails);
         }
     } catch (error) {
         console.error(error);
@@ -50,5 +40,5 @@ const searchAndDisplayResults = async (keyword, animalType, count) => {
 };
 
 module.exports = {
-    searchAndDisplayResults
+    searchAndDisplayResults,
 };
