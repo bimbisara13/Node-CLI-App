@@ -1,10 +1,11 @@
 const enquirer = require('enquirer');
 const { getShowList, getShowById } = require('./api');
+const { saveHistoryMetaData } = require('./history')
 
 const searchAndDisplayResults = async (keyword) => {
     try {
         const shows = await getShowList(keyword);
-
+        saveHistoryMetaData(keyword,shows.length)
         if (shows.length === 0) {
             console.log(`\nFound 0 shows for "${keyword}".`);
             return;
